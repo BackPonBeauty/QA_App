@@ -147,6 +147,8 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
                 val intent = Intent(applicationContext, LoginActivity::class.java)
+                val from = "MainActivity"
+                intent.putExtra("FROM_KEY",from)
                 startActivity(intent)
             } else {
                 // ジャンルを渡して質問作成画面を起動する

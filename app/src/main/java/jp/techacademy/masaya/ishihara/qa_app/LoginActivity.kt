@@ -1,5 +1,6 @@
 package jp.techacademy.masaya.ishihara.qa_app
 
+import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
 
+var form_key_public = ""
 class LoginActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>
@@ -22,10 +24,17 @@ class LoginActivity : AppCompatActivity() {
     // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
 
+    override fun onBackPressed() {
+        if(form_key_public =="QuestionDetailActivity"){
+            QuestionDetailActivity.start(this,"dummy")
+        }
+        finish()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        val from_key = intent.getStringExtra("FROM_KEY")
+        form_key_public = from_key
         mDataBaseReference = FirebaseDatabase.getInstance().reference
 
         // FirebaseAuthのオブジェクトを取得する
@@ -83,6 +92,9 @@ class LoginActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
 
                 // Activityを閉じる
+                if(from_key =="QuestionDetailActivity"){
+                    QuestionDetailActivity.start(this,"dummy")
+                }
                 finish()
 
             } else {

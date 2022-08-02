@@ -58,6 +58,8 @@
 
     <string name="send_answer_failure">投稿に失敗しました</string>
     <string name="answer_error_message">回答を入力してください</string>
+    <string name="added_favorite_message">お気に入りに登録しました</string>
+    <string name="delete_favorite_message">お気に入りから削除しました</string>
     <string name="name">name</string>
     <string name="title">Title</string>
     <string name="todo">TODO</string>

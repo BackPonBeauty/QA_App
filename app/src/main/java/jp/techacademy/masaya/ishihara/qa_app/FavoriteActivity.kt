@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 
-class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener {    // ← 修正
+class FavoriteActivity : AppCompatActivity() {    // ← 修正
 
     private var mGenre = 0   // ← 追加
 
@@ -34,19 +34,25 @@ class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSe
 
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+//            val favpath = dataSnapshot.getValue(String::class.java)
             val map = dataSnapshot.value as Map<String, String>
 
-            val favoriteuid = map["favoriteuid"] ?: ""
+            val favoriteuid = dataSnapshot.getKey().toString()
+      //      Log.d("favpath",favpath.toString())
             val genre = map["genre"]?:""
-            val favoriteRef = mDatabaseReference.child(ContentsPATH).child(genre).child(favoriteuid)
+            Log.d("genre",genre.toString())
+            val favoriteRef = mDatabaseReference.child(ContentsPATH).child(genre).child(favoriteuid)//child(favpath.toString())
+            Log.d("taaaaaaag",favoriteRef.toString())
+
+
             favoriteRef.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                    val map = snapshot.value as Map<String, String>
-                        val title = map["title"]?:""
-                        val body = map["body"] ?: ""
-                        val name = map["name"] ?: ""
-                        val uid = map["uid"] ?: ""
-                        val imageString = map["image"] ?: ""
+                        val data = snapshot.value as Map<*, *>?
+                        val title = data?.get("title") ?:""
+                        val body = data?.get("body") ?: ""
+                        val name = data?.get("name") ?: ""
+                        val uid = data?.get("uid") ?: ""
+                        val imageString = data?.get("image") .toString()?: ""
                         val bytes =
                             if (imageString.isNotEmpty()) {
                                 Base64.decode(imageString, Base64.DEFAULT)
@@ -57,7 +63,7 @@ class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSe
                         //    val favoriteUid = map["FavoriteUid"] ?: ""
                         // Log.d("aaaaaaaaaaaaaaaaaaaaa",title)
                         val answerArrayList = ArrayList<Answer>()
-                        val answerMap = map["answers"] as Map<String, String>?
+                        val answerMap = data?.get("answers") as Map<String, String>?
                         if (answerMap != null) {
                             for (key in answerMap.keys) {
                                 val temp = answerMap[key] as Map<String, String>
@@ -68,7 +74,7 @@ class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSe
                                 answerArrayList.add(answer)
                             }
                         }
-                    Log.d("taaaaaaag",body.toString())
+
 
                         val question = Question(title.toString(), body.toString(), name.toString(), uid.toString(), dataSnapshot.key ?: "",mGenre, bytes, answerArrayList)
                         mQuestionArrayList.add(question)
@@ -79,6 +85,7 @@ class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSe
 
 
             })
+
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
@@ -184,45 +191,7 @@ class FavoriteActivity : AppCompatActivity() , NavigationView.OnNavigationItemSe
         return super.onOptionsItemSelected(item)
     }
 
-    // ～～ ここから
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
 
-        if (id == R.id.nav_hobby) {
-            toolbar.title = getString(R.string.menu_hobby_label)
-            mGenre = 1
-        } else if (id == R.id.nav_life) {
-            toolbar.title = getString(R.string.menu_life_label)
-            mGenre = 2
-        } else if (id == R.id.nav_health) {
-            toolbar.title = getString(R.string.menu_health_label)
-            mGenre = 3
-        } else if (id == R.id.nav_compter) {
-            toolbar.title = getString(R.string.menu_compter_label)
-            mGenre = 4
-        }
-
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-        // --- ここから ---
-        // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
-        mQuestionArrayList.clear()
-        mAdapter.setQuestionArrayList(mQuestionArrayList)
-        //   mFavAdapter.setFavoriteArrayList(mFavoriteArrayList)
-        listView.adapter = mAdapter
-
-        // 選択したジャンルにリスナーを登録する
-        if (mGenreRef != null) {
-            mGenreRef!!.removeEventListener(mEventListener)
-        }
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
-    //    mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
-        mGenreRef = mDatabaseReference.child(FavoritePATH).child(userID)//.child(mGenre.toString()).child("favoriteuid")
-        mGenreRef!!.addChildEventListener(mEventListener)
-
-        return true
-        // --- ここまで追加する ---
-    }
     override fun onBackPressed() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
