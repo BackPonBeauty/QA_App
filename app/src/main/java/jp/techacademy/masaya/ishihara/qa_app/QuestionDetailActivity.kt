@@ -146,6 +146,14 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
                     favorite_flag = true
                     val view = findViewById<View>(android.R.id.content)
                     Snackbar.make(view, getString(R.string.delete_favorite_message), Snackbar.LENGTH_LONG).show()
+                    val userID = FirebaseAuth.getInstance().currentUser!!.uid
+                    val dataBaseReference = FirebaseDatabase.getInstance().reference
+                    val favoriteRef =
+                        dataBaseReference.child(FavoritePATH).child(userID).child(mQuestion.questionUid)
+                    val data = HashMap<String, String>()
+                    //   data["favoriteuid"] = mQuestion.questionUid
+                    data["genre"] = mQuestion.genre.toString()
+                    favoriteRef.removeValue()
                 }
 
 
