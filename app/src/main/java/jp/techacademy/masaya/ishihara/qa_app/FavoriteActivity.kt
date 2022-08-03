@@ -52,10 +52,10 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
                         val body = data?.get("body") ?: ""
                         val name = data?.get("name") ?: ""
                         val uid = data?.get("uid") ?: ""
-                        val imageString = data?.get("image") .toString()?: ""
+                        val imageString = data?.get("image")?:""
                         val bytes =
-                            if (imageString.isNotEmpty()) {
-                                Base64.decode(imageString, Base64.DEFAULT)
+                            if (imageString != null) {
+                                Base64.decode(imageString.toString(), Base64.DEFAULT)
                             } else {
                                 byteArrayOf()
                         }

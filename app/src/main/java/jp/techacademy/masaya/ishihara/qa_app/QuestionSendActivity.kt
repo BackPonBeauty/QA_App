@@ -214,7 +214,11 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
         progressBar.visibility = View.GONE
 
         if (databaseError == null) {
+            val intent = Intent(applicationContext, MainActivity::class.java)
+        //    intent.putExtra("question", mQuestion)
+            startActivity(intent)
             finish()
+
         } else {
             Snackbar.make(findViewById(android.R.id.content), getString(R.string.question_send_error_message), Snackbar.LENGTH_LONG).show()
         }
