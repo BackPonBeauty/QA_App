@@ -146,6 +146,7 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
             val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
             intent.putExtra("question", mQuestionArrayList[position])
             startActivity(intent)
+            finish()
         }
 
     }

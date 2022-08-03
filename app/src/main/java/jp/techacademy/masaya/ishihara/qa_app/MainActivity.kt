@@ -150,11 +150,13 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
                 val from = "MainActivity"
                 intent.putExtra("FROM_KEY",from)
                 startActivity(intent)
+                finish()
             } else {
                 // ジャンルを渡して質問作成画面を起動する
                 val intent = Intent(applicationContext, QuestionSendActivity::class.java)
                 intent.putExtra("genre", mGenre)
                 startActivity(intent)
+                finish()
             }
         }
         // --- ここまで修正 ---
@@ -180,6 +182,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
             intent.putExtra("question", mQuestionArrayList[position])
             startActivity(intent)
+            finish()
         }
 
     }
@@ -206,6 +209,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         if (id == R.id.action_settings) {
             val intent = Intent(applicationContext, SettingActivity::class.java)
             startActivity(intent)
+            finish()
             return true
         }
 

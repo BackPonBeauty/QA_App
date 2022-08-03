@@ -1,6 +1,7 @@
 package jp.techacademy.masaya.ishihara.qa_app
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -16,7 +17,12 @@ import kotlinx.android.synthetic.main.activity_answer_send.*
 class AnswerSendActivity : AppCompatActivity(), View.OnClickListener, DatabaseReference.CompletionListener {
 
     private lateinit var mQuestion: Question
-
+    override  fun onBackPressed(){
+        val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
+        intent.putExtra("question", mQuestion)
+        startActivity(intent)
+        finish()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_answer_send)

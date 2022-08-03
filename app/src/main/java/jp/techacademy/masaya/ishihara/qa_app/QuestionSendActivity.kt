@@ -36,6 +36,12 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
     private var mGenre: Int = 0
     private var mPictureUri: Uri? = null
 
+    override  fun onBackPressed(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        //    intent.putExtra("question", mQuestion)
+        startActivity(intent)
+        finish()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_send)

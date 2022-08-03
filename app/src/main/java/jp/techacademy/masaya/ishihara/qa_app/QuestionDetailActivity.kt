@@ -13,6 +13,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_question_detail.*
+import java.util.*
+import kotlin.collections.HashMap
+
 var favorite_flag  = false
 class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.CompletionListener{
 
@@ -22,8 +25,8 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
     private lateinit var mFavoriteRef: DatabaseReference
 
     companion object {
-        fun start(activity: Activity,key: String) {
-            activity.startActivity(Intent(activity, QuestionDetailActivity::class.java).putExtra(key,key))
+        fun start(activity: Activity,mQuestion:Question) {
+            activity.startActivity(Intent(activity, QuestionDetailActivity::class.java).putExtra("question", mQuestion))
         }
     }
     private val mEventListener = object : ChildEventListener {
@@ -64,6 +67,12 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
         override fun onCancelled(databaseError: DatabaseError) {
 
         }
+    }
+    override  fun onBackPressed(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        //    intent.putExtra("question", mQuestion)
+        startActivity(intent)
+        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -216,10 +225,10 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
 
                 if (user == null) {
                     // ログインしていなければログイン画面に遷移させる
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    val from = "QuestionDetailActivity"
-                    intent.putExtra("FROM_KEY",from)
+                    val intent = Intent(applicationContext, LoginActivity2::class.java)
+                    intent.putExtra("question", mQuestion)
                     startActivity(intent)
+                    finish()
                 } else {
                     // Questionを渡して回答作成画面を起動する
                     // --- ここから ---

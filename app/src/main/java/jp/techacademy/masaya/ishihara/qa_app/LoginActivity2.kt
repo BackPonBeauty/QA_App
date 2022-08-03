@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.preference.PreferenceManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
@@ -14,18 +15,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity2 : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mCreateAccountListener: OnCompleteListener<AuthResult>
     private lateinit var mLoginListener: OnCompleteListener<AuthResult>
     private lateinit var mDataBaseReference: DatabaseReference
-
+    private lateinit var mQuestion: Question
     // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
 
     override  fun onBackPressed(){
-        val intent = Intent(applicationContext, MainActivity::class.java)
-    //    intent.putExtra("question", mQuestion)
+        val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
+        intent.putExtra("question", mQuestion)
         startActivity(intent)
         finish()
     }
@@ -33,6 +34,9 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        val extras = intent.extras
+        mQuestion = extras!!.get("question") as Question
 
         mDataBaseReference = FirebaseDatabase.getInstance().reference
 
@@ -89,10 +93,11 @@ class LoginActivity : AppCompatActivity() {
 
                 // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
-
-                val intent = Intent(applicationContext, MainActivity::class.java)
-                //    intent.putExtra("question", mQuestion)
+                val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
+                intent.putExtra("question", mQuestion)
                 startActivity(intent)
+                finish()
+                // Activityを閉じる
                 finish()
 
             } else {

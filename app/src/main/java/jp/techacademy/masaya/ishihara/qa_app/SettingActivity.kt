@@ -1,5 +1,6 @@
 package jp.techacademy.masaya.ishihara.qa_app
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
@@ -14,6 +15,12 @@ class SettingActivity : AppCompatActivity() {
 
     private lateinit var mDataBaseReference: DatabaseReference
 
+    override  fun onBackPressed(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        //    intent.putExtra("question", mQuestion)
+        startActivity(intent)
+        finish()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
