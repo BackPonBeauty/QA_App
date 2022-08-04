@@ -21,14 +21,23 @@ class SettingActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
 
         // Preferenceから表示名を取得してEditTextに反映させる
-        val sp = PreferenceManager.getDefaultSharedPreferences(this)
-        val name = sp.getString(NameKEY, "")
-        nameText.setText(name)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            // ログインしていない場合は何もしない
+            changeButton.text = "ログインしていません"
+            logoutButton.text = "ログインしていません"
+        }else {
+            val sp = PreferenceManager.getDefaultSharedPreferences(this)
+            val name = sp.getString(NameKEY, "")
+            nameText.setText(name)
+        }
 
         mDataBaseReference = FirebaseDatabase.getInstance().reference
 
@@ -45,7 +54,7 @@ class SettingActivity : AppCompatActivity() {
 
             if (user == null) {
                 // ログインしていない場合は何もしない
-                Snackbar.make(v, getString(R.string.no_login_user), Snackbar.LENGTH_LONG).show()
+                //    Snackbar.make(v, getString(R.string.no_login_user), Snackbar.LENGTH_LONG).show()
             } else {
                 // 変更した表示名をFirebaseに保存する
                 val name2 = nameText.text.toString()
@@ -65,9 +74,19 @@ class SettingActivity : AppCompatActivity() {
         }
 
         logoutButton.setOnClickListener { v ->
-            FirebaseAuth.getInstance().signOut()
-            nameText.setText("")
-            Snackbar.make(v, getString(R.string.logout_complete_message), Snackbar.LENGTH_LONG).show()
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user == null) {
+           //     logoutButton.isClickable = false
+                logoutButton.text = "ログインしていません"
+            }else{
+                FirebaseAuth.getInstance().signOut()
+                nameText.setText("")
+                Snackbar.make(v, getString(R.string.logout_complete_message), Snackbar.LENGTH_LONG).show()
+                logoutButton.isClickable = false
+                logoutButton.text = "ログインしていません"
+                changeButton.isClickable = false
+                changeButton.text = "ログインしていません"
+            }
         }
     }
 }

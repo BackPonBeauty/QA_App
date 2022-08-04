@@ -17,12 +17,7 @@ import kotlinx.android.synthetic.main.activity_answer_send.*
 class AnswerSendActivity : AppCompatActivity(), View.OnClickListener, DatabaseReference.CompletionListener {
 
     private lateinit var mQuestion: Question
-    override  fun onBackPressed(){
-        val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
-        intent.putExtra("question", mQuestion)
-        startActivity(intent)
-        finish()
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_answer_send)
@@ -39,10 +34,7 @@ class AnswerSendActivity : AppCompatActivity(), View.OnClickListener, DatabaseRe
         progressBar.visibility = View.GONE
 
         if (databaseError == null) {
-            val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
-            intent.putExtra("question", mQuestion)
-            startActivity(intent)
-            finish()
+           finish()
 
         } else {
             Snackbar.make(findViewById(android.R.id.content), getString(R.string.send_answer_failure), Snackbar.LENGTH_LONG).show()

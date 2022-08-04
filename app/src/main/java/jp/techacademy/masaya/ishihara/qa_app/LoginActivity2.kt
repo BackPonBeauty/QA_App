@@ -98,7 +98,7 @@ class LoginActivity2 : AppCompatActivity() {
                 startActivity(intent)
                 finish()
                 // Activityを閉じる
-                finish()
+
 
             } else {
                 // 失敗した場合

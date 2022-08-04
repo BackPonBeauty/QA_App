@@ -18,40 +18,50 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
-
+//var public_genre = 0
 class FavoriteActivity : AppCompatActivity() {    // ← 修正
 
-    private var mGenre = 0   // ← 追加
+//    private var mGenre = 0   // ← 追加
 
     // --- ここから ---
+    private lateinit var mQuestions: Question
     private lateinit var mDatabaseReference: DatabaseReference
     private lateinit var mQuestionArrayList: ArrayList<Question>
     private lateinit var mAdapter: QuestionsListAdapter
 
     private var mGenreRef: DatabaseReference? = null
-    private var mFavoRef: DatabaseReference? = null
+  //  private var mFavoRef: DatabaseReference? = null
    // private lateinit var mTaskAdapter: TaskAdapter
-
+ /*
+  override  fun onBackPressed(){
+      val intent = Intent(applicationContext, MainActivity::class.java)
+      //    intent.putExtra("question", mQuestion)
+      startActivity(intent)
+      finish()
+  }
+  */
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-//            val favpath = dataSnapshot.getValue(String::class.java)
             val map = dataSnapshot.value as Map<String, String>
-
             val favoriteuid = dataSnapshot.getKey().toString()
-      //      Log.d("favpath",favpath.toString())
             val genre = map["genre"]?:""
-            Log.d("genre",genre.toString())
+ //           public_genre = genre.toInt()
+            Log.d("genreerererererererer",genre.toString())
             val favoriteRef = mDatabaseReference.child(ContentsPATH).child(genre).child(favoriteuid)//child(favpath.toString())
-            Log.d("taaaaaaag",favoriteRef.toString())
+
 
 
             favoriteRef.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
+                        val Genre = snapshot.getKey().toString()
                         val data = snapshot.value as Map<*, *>?
                         val title = data?.get("title") ?:""
                         val body = data?.get("body") ?: ""
                         val name = data?.get("name") ?: ""
                         val uid = data?.get("uid") ?: ""
+                 //       val ggg = data?.get("uid") ?: ""
+                   //     val questionuid =data?.get("questionuid") ?: ""
+               //       val genre = data?.get("genre")?:""
                         val imageString = data?.get("image")?:""
                         val bytes =
                             if (imageString != null) {
@@ -61,7 +71,7 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
                         }
 
                         //    val favoriteUid = map["FavoriteUid"] ?: ""
-                        // Log.d("aaaaaaaaaaaaaaaaaaaaa",title)
+                 //        Log.d("xxxxxxxxxxxxxxxxxxx",ggg.toString())
                         val answerArrayList = ArrayList<Answer>()
                         val answerMap = data?.get("answers") as Map<String, String>?
                         if (answerMap != null) {
@@ -76,9 +86,12 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
                         }
 
 
-                        val question = Question(title.toString(), body.toString(), name.toString(), uid.toString(), dataSnapshot.key ?: "",mGenre, bytes, answerArrayList)
+                  //      val question = Question(title.toString(), body.toString(), name.toString(), uid.toString(), questionUid.toString()werArrayList)
+                        val question = Question(title.toString(), body.toString(), name.toString(), uid.toString(), dataSnapshot.key ?: "",
+                            genre.toInt(), bytes, answerArrayList)
                         mQuestionArrayList.add(question)
                         mAdapter.notifyDataSetChanged()
+                        toolbar.title = getString(R.string.menu_favorite_label)
                 }
 
                 override fun onCancelled(firebaseError: DatabaseError) {}
@@ -125,11 +138,26 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
 
         }
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        mQuestionArrayList.clear()
+        toolbar.title ="再開"
+            reloadListView()
+        if(mQuestionArrayList.size == 0){
+            toolbar.title = getString(R.string.debug_favorite_label)
+        }
+    }
+
     // --- ここまで追加する ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.content_main)
+        setContentView(R.layout.app_bar_favorite)
+  //      val extras = intent.extras
+ //       mQuestions = extras!!.get("question") as Question
+   //     mGenre = mQuestions.genre
 
+        toolbar.title = getString(R.string.debug_favorite_label)
         // Firebase
         mDatabaseReference = FirebaseDatabase.getInstance().reference
 
@@ -146,7 +174,7 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
             val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
             intent.putExtra("question", mQuestionArrayList[position])
             startActivity(intent)
-            finish()
+
         }
 
     }
@@ -190,13 +218,6 @@ class FavoriteActivity : AppCompatActivity() {    // ← 修正
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-
-    override fun onBackPressed() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
     }
     // ～～ ここまで
 }

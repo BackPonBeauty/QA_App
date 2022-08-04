@@ -36,12 +36,7 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
     private var mGenre: Int = 0
     private var mPictureUri: Uri? = null
 
-    override  fun onBackPressed(){
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        //    intent.putExtra("question", mQuestion)
-        startActivity(intent)
-        finish()
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_send)
@@ -152,6 +147,7 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
             data["title"] = title
             data["body"] = body
             data["name"] = name!!
+            data["ganre"] =mGenre.toString()
 
             // 添付画像を取得する
             val drawable = imageView.drawable as? BitmapDrawable
@@ -214,10 +210,7 @@ class QuestionSendActivity : AppCompatActivity(), View.OnClickListener, Database
         progressBar.visibility = View.GONE
 
         if (databaseError == null) {
-            val intent = Intent(applicationContext, MainActivity::class.java)
-        //    intent.putExtra("question", mQuestion)
-            startActivity(intent)
-            finish()
+           finish()
 
         } else {
             Snackbar.make(findViewById(android.R.id.content), getString(R.string.question_send_error_message), Snackbar.LENGTH_LONG).show()

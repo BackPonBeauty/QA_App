@@ -44,7 +44,9 @@ class QuestionsListAdapter(context: Context) : BaseAdapter() {
         titleText.text = mQuestionArrayList[position].title
 
         val nameText = convertView.nameTextView as TextView
-        nameText.text = mQuestionArrayList[position].name
+                nameText.text = mQuestionArrayList[position].name
+        val genreText = convertView.genreTextView as TextView
+        genreText.text = mQuestionArrayList[position].genre.toString()
 
         val resText = convertView.resTextView as TextView
         val resNum = mQuestionArrayList[position].answers.size

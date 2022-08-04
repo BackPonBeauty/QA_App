@@ -4,10 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.app.Activity
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -23,12 +21,14 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
     private lateinit var mAdapter: QuestionDetailListAdapter
     private lateinit var mAnswerRef: DatabaseReference
     private lateinit var mFavoriteRef: DatabaseReference
-
-    companion object {
-        fun start(activity: Activity,mQuestion:Question) {
-            activity.startActivity(Intent(activity, QuestionDetailActivity::class.java).putExtra("question", mQuestion))
-        }
+/*
+    override  fun onBackPressed(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        //    intent.putExtra("question", mQuestion)
+        startActivity(intent)
+        finish()
     }
+ */
     private val mEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
 
@@ -68,28 +68,40 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
 
         }
     }
-    override  fun onBackPressed(){
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        //    intent.putExtra("question", mQuestion)
-        startActivity(intent)
-        finish()
+
+    override fun onRestart() {
+        super.onRestart()
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            fabo.isClickable = true
+            fabo!!.hide()
+        }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 渡ってきたQuestionのオブジェクトを保持する
+
         val extras = intent.extras
         mQuestion = extras!!.get("question") as Question
-//        title = mQuestion.title
+        Log.d("GENRE",mQuestion.genre.toString())
+        title = mQuestion.title
+        setContentView(R.layout.activity_question_detail)
+
+   //     val sp = PreferenceManager.getDefaultSharedPreferences(this)
+   //     val val_Genre = sp.getString(NameKEY, "")
 
 
+    //    Log.d("GENRE",val_Genre.toString())
         val user = FirebaseAuth.getInstance().currentUser
 
         if (user == null) {
-            setContentView(R.layout.activity_question_detail2)
+            fabo.isClickable = false
+            fabo.hide()
         } else {
 
-            setContentView(R.layout.activity_question_detail)
+
 
             val userID = FirebaseAuth.getInstance().currentUser!!.uid
             val dataBaseReference = FirebaseDatabase.getInstance().reference
@@ -147,7 +159,6 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
                     val favoriteRef =
                         dataBaseReference.child(FavoritePATH).child(userID).child(mQuestion.questionUid)
                     val data = HashMap<String, String>()
-                    //   data["favoriteuid"] = mQuestion.questionUid
                     data["genre"] = mQuestion.genre.toString()
                     favoriteRef.setValue(data, this)
                 }else{
@@ -160,7 +171,7 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
                     val favoriteRef =
                         dataBaseReference.child(FavoritePATH).child(userID).child(mQuestion.questionUid)
                     val data = HashMap<String, String>()
-                    //   data["favoriteuid"] = mQuestion.questionUid
+               //     data["favoriteuid"] = mQuestion.questionUid
                     data["genre"] = mQuestion.genre.toString()
                     favoriteRef.removeValue()
                 }
@@ -229,13 +240,14 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
                     intent.putExtra("question", mQuestion)
                     startActivity(intent)
                     finish()
+
                 } else {
                     // Questionを渡して回答作成画面を起動する
                     // --- ここから ---
                     val intent = Intent(applicationContext, AnswerSendActivity::class.java)
                     intent.putExtra("question", mQuestion)
                     startActivity(intent)
-                    finish()
+
                     // --- ここまで ---
                 }
             }
@@ -249,7 +261,7 @@ class QuestionDetailActivity : AppCompatActivity() ,DatabaseReference.Completion
     }
     override fun onComplete(databaseError: DatabaseError?, databaseReference: DatabaseReference) {
         if (databaseError == null) {
-        //    finish()
+
         }
     }
 }

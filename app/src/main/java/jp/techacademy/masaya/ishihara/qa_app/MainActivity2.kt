@@ -14,13 +14,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 // findViewById()を呼び出さずに該当Viewを取得するために必要となるインポート宣言
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_question_detail.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.app_bar_main.fab
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.content_main.listView
 
-class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener {    // ← 修正
+class MainActivity2 : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener {    // ← 修正
 
     //val app = (application as MainApplication)
 
@@ -60,10 +57,23 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
                     answerArrayList.add(answer)
                 }
             }
+            /*
+            val favoriteArrayList = ArrayList<Answer>()
+            val userID = FirebaseAuth.getInstance().currentUser!!.uid
+            var mDataBaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference
+            var favoriteRef = mDataBaseReference.child(FavoritePATH).child(userID).child(uid).child("favoriteuid")
+
+             */
+
+
+
+            //          Log.d("uuuuuuuuuuuuuuuuuuu",favoriteRef.toString())
+            //         Log.d("uuuuuuuuuuuuuuuuuuu",uid)
+            //    val post = dataSnapshot.getValue<Post>()
 
 
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "",
-            mGenre, bytes, answerArrayList)
+                mGenre, bytes, answerArrayList)
             mQuestionArrayList.add(question)
             mAdapter.notifyDataSetChanged()
         }
@@ -106,28 +116,16 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val intent = Intent(this, MainActivity2::class.java)
-            startActivity(intent)
-            finish()
-        }else{
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
 
     // --- ここまで追加する ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main2)
+
 
         // idがtoolbarがインポート宣言により取得されているので
         // id名でActionBarのサポートを依頼
-        setSupportActionBar(toolbar)
+//        setSupportActionBar(toolbar)
 
         // fabにClickリスナーを登録
         fab.setOnClickListener { view ->
@@ -143,8 +141,9 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             if (user == null) {
                 // ログインしていなければログイン画面に遷移させる
                 val intent = Intent(applicationContext, LoginActivity::class.java)
+                val from = "MainActivity"
+                intent.putExtra("FROM_KEY",from)
                 startActivity(intent)
-           //     finish()
 
             } else {
                 // ジャンルを渡して質問作成画面を起動する
@@ -154,7 +153,6 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
             }
         }
-
         // --- ここまで修正 ---
 
         // ～～ ここから
@@ -165,6 +163,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // Firebase
         mDatabaseReference = FirebaseDatabase.getInstance().reference
 
         // ListViewの準備
@@ -172,23 +171,15 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         mQuestionArrayList = ArrayList<Question>()
         mAdapter.notifyDataSetChanged()
 
-        listView.setOnItemClickListener { parent, view, position, id ->
+        listView.setOnItemClickListener{parent, view, position, id ->
             // Questionのインスタンスを渡して質問詳細画面を起動する
             val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
             intent.putExtra("question", mQuestionArrayList[position])
-            intent.putExtra("from", "main")
             startActivity(intent)
-
-
+      //      finish()
         }
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val intent = Intent(this, MainActivity2::class.java)
-            startActivity(intent)
-            finish()
-        }
+
     }
-
     override fun onResume() {
         super.onResume()
         // 1:趣味を既定の選択とする
@@ -211,7 +202,6 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
         if (id == R.id.action_settings) {
             val intent = Intent(applicationContext, SettingActivity::class.java)
-            intent.putExtra("genre", mGenre)
             startActivity(intent)
             finish()
             return true
@@ -238,9 +228,9 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             mGenre = 4
         }else if (id == R.id.nav_favorite ){
             val intent = Intent(applicationContext, FavoriteActivity::class.java)
-    //        intent.putExtra("genre", mGenre)
+     //       intent.putExtra("genre", mGenre)
             startActivity(intent)
-
+       //     finish()
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)

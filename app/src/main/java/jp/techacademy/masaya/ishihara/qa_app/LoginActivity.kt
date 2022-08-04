@@ -22,14 +22,14 @@ class LoginActivity : AppCompatActivity() {
 
     // アカウント作成時にフラグを立て、ログイン処理後に名前をFirebaseに保存する
     private var mIsCreateAccount = false
-
+    /*
     override  fun onBackPressed(){
         val intent = Intent(applicationContext, MainActivity::class.java)
-    //    intent.putExtra("question", mQuestion)
+        //    intent.putExtra("question", mQuestion)
         startActivity(intent)
         finish()
     }
-
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -89,11 +89,14 @@ class LoginActivity : AppCompatActivity() {
 
                 // プログレスバーを非表示にする
                 progressBar.visibility = View.GONE
-
+                /*
                 val intent = Intent(applicationContext, MainActivity::class.java)
-                //    intent.putExtra("question", mQuestion)
+          //      intent.putExtra("question", mQuestion)
                 startActivity(intent)
+
+                 */
                 finish()
+         //       finish()
 
             } else {
                 // 失敗した場合

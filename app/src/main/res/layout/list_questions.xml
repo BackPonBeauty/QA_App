@@ -43,4 +43,10 @@
         android:layout_toEndOf="@+id/imageView"
         android:text="New Text" />
 
+    <TextView
+        android:id="@+id/genreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
 </RelativeLayout>
